@@ -1,0 +1,78 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    command:  --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    # restart: always
+    # network_mode: host
+    volumes:
+      - ./data/mysql/:/var/lib/mysql/
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+      MYSQL_ROOT_PASSWORD: "123456" # 配置root用户密码
+  redis:
+    image: redis
+    # command: --requirepass "12345678" # redis库密码,不需要密码注释本行
+    restart: always
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+    volumes:
+      - ./data/redis/:/data/
+  ## grok-mirror
+  grok-share-server:
+    image: lyy0709/grok-share-server:dev
+    restart: always
+    ports:
+      - 8301:8001
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+      PROXY_URL: "http://proxy:8080/proxy" # 代理服务地址,支持http和https，socks5，没有则留空默认走本地
+      ORIGIN: "http://localhost:8300" # 本服务地址，如你的页面为https://xxx.com，这里就填写https://xxx.com
+      CHATPROXY: "http://chatproxy:8080/proxy" # 网关配置，留空则不使用网关走本地代理
+      # 内容审核及速率限制
+      # AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+    volumes:
+      - ./grok_config.yaml:/app/config.yaml
+      - ./data/grok-share-server/:/app/data/
+  ## claude-mirror
+  dddd-share-server:
+    image: lyy0709/dddd-share-server:dev
+    restart: always
+    ports:
+      - 8302:8001
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+      PROXY_URL: "http://proxy:8080/proxy" # 代理服务地址,支持http和https，socks5，没有则留空默认走本地
+      ORIGIN: "http://localhost:8300" # 本服务地址，如你的页面为https://xxx.com，这里就填写https://xxx.com
+      CHATPROXY: "https://chatproxy.com
+      # 内容审核及速率限制
+      # AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+    volumes:
+      - ./claude_config.yaml:/app/config.yaml
+      - ./data/dddd-share-server/:/app/data/
+  ##gpt-mirror
+  chatgpt-share-server:
+    image: xyhelper/chatgpt-share-server:latest
+    restart: always
+    ports:
+      - 8300:8001
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+      # 接入网关地址
+      CHATPROXY: "https://demo.xyhelper.cn"
+      # 接入网关的authkey
+      AUTHKEY: "xyhelper"
+      # 内容审核及速率限制
+      # AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+    volumes:
+      - ./gpt_config.yaml:/app/config.yaml
+      - ./data/chatgpt-share-server/:/app/data/
+  # auditlimit:
+  #   image: xyhelper/auditlimit
+  #   restart: always
+  #   # ports:
+  #   #   - 9611:8080
+  #   environment:
+  #     LIMIT: 40  # 限制每个userToken允许的次数
+  #     PER: "3h" # 限制周期 1s, 1m, 1h, 1d, 1w, 1y
