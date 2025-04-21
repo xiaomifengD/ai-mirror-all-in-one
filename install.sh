@@ -39,11 +39,22 @@ create_directories() {
     mkdir -p ./data/grok-share-server
     mkdir -p ./data/dddd-share-server
     mkdir -p ./data/chatgpt-share-server
+    mkdir -p ./backups
 }
 
 # 生成 docker-compose.yml 文件
 generate_docker_compose() {
     print_message "生成 docker-compose.yml 文件..."
+    
+    # 备份已有的 docker-compose.yml 文件
+    if [ -f "docker-compose.yml" ]; then
+        timestamp=$(date +%Y%m%d-%H%M%S)
+        backup_dir="./backups/docker-compose"
+        mkdir -p "${backup_dir}"
+        cp docker-compose.yml "${backup_dir}/docker-compose-${timestamp}.yml"
+        print_message "已备份现有 docker-compose.yml 文件到: ${backup_dir}/docker-compose-${timestamp}.yml"
+    fi
+    
     cat > docker-compose.yml << 'EOL'
 version: '3.8'
 services:
@@ -78,6 +89,13 @@ EOL
       PROXY_URL: "http://proxy:8080/proxy"
       ORIGIN: "http://localhost:8300"
       CHATPROXY: "http://chatproxy:8080/proxy"
+EOL
+        if [ "$INSTALL_AUDIT" = true ]; then
+            cat >> docker-compose.yml << 'EOL'
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+EOL
+        fi
+        cat >> docker-compose.yml << 'EOL'
     volumes:
       - ./grok_config.yaml:/app/config.yaml
       - ./data/grok-share-server/:/app/data/
@@ -96,6 +114,13 @@ EOL
       PROXY_URL: "http://proxy:8080/proxy"
       ORIGIN: "http://localhost:8300"
       CHATPROXY: "https://chatproxy.com"
+EOL
+        if [ "$INSTALL_AUDIT" = true ]; then
+            cat >> docker-compose.yml << 'EOL'
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+EOL
+        fi
+        cat >> docker-compose.yml << 'EOL'
     volumes:
       - ./claude_config.yaml:/app/config.yaml
       - ./data/dddd-share-server/:/app/data/
@@ -113,9 +138,27 @@ EOL
       TZ: Asia/Shanghai
       CHATPROXY: "https://demo.xyhelper.cn"
       AUTHKEY: "xyhelper"
+EOL
+        if [ "$INSTALL_AUDIT" = true ]; then
+            cat >> docker-compose.yml << 'EOL'
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+EOL
+        fi
+        cat >> docker-compose.yml << 'EOL'
     volumes:
       - ./gpt_config.yaml:/app/config.yaml
       - ./data/chatgpt-share-server/:/app/data/
+EOL
+    fi
+
+    if [ "$INSTALL_AUDIT" = true ]; then
+        cat >> docker-compose.yml << 'EOL'
+  auditlimit:
+    image: xyhelper/auditlimit
+    restart: always
+    environment:
+      LIMIT: 40
+      PER: "3h"
 EOL
     fi
 }
@@ -131,6 +174,7 @@ main() {
     INSTALL_GROK=false
     INSTALL_DDD=false
     INSTALL_GPT=false
+    INSTALL_AUDIT=false
     
     # 用户选择要安装的服务
     while true; do
@@ -160,6 +204,15 @@ main() {
         esac
     done
     
+    while true; do
+        read -p "是否安装内容审核和速率限制服务? (y/n): " yn
+        case $yn in
+            [Yy]* ) INSTALL_AUDIT=true; break;;
+            [Nn]* ) break;;
+            * ) print_warning "请输入 y 或 n";;
+        esac
+    done
+    
     # 创建目录
     create_directories
     
@@ -168,11 +221,12 @@ main() {
     
     # 启动服务
     print_message "正在启动服务..."
-    docker-compose up -d
-    
+    chmod +x restart.sh
+    ./restart.sh    
     print_message "安装完成！"
     print_message "服务状态："
     docker-compose ps
+    
 }
 
 # 执行主函数
