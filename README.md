@@ -2,7 +2,8 @@
 ## 说明
 **ai-mirror-allinone** 是集成了  gpt,克劳德,grok 三种镜像为一体的缝合怪，
 三个镜像可以共享 mysql 和 redis镜像,减少了内存占用，还提供了bash脚本方便统一管理
-三个仓库原版地址:
+
+> 三个仓库原版地址:
 - https://github.com/xyhelper/chatgpt-share-server-deploy
 - https://github.com/dddd-dddd-dddd/dddd-deploy
 - https://github.com/lyy0709/grok-share-server-deploy
