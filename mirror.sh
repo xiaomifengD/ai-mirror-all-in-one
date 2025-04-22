@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# 定义颜色代码
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
 # Function to check if Docker is installed
 check_docker() {
     if command -v docker &> /dev/null; then
@@ -186,16 +195,16 @@ restore_databases() {
 
 # Main menu
 while true; do
-    echo "请选择操作："
-    echo "1. 安装 Docker"
-    echo "2. 安装 AI 服务"
-    echo "3. 重启服务"
-    echo "4. 停止服务"
-    echo "5. 备份数据库"
-    echo "6. 还原数据库"
-    echo "7. 退出"
+    echo -e "${GREEN}请选择操作：${NC}"
+    echo -e "${YELLOW}1. 安装 Docker${NC}"
+    echo -e "${YELLOW}2. 安装 AI 服务${NC}"
+    echo -e "${BLUE}3. 重启服务${NC}"
+    echo -e "${BLUE}4. 停止服务${NC}"
+    echo -e "${MAGENTA}5. 备份数据库${NC}"
+    echo -e "${MAGENTA}6. 还原数据库${NC}"
+    echo -e "${RED}7. 退出${NC}"
     
-    read -p "请输入选项 (1-7): " choice
+    read -p "请输入选项 (1-7): " choice < /dev/tty
     
     case $choice in
         1)
@@ -217,11 +226,11 @@ while true; do
             restore_databases
             ;;
         7)
-            echo "正在退出..."
+            echo -e "${RED}正在退出...${NC}"
             exit 0
             ;;
         *)
-            echo "无效的选项，请重新输入。"
+            echo -e "${RED}无效的选项，请重新输入。${NC}"
             ;;
     esac
     
