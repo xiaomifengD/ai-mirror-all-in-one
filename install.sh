@@ -178,7 +178,7 @@ main() {
     
     # 用户选择要安装的服务
     while true; do
-        read -p "是否安装 Grok 服务? (y/n): " yn
+        read -p "是否安装 Grok 服务? (y/n): " yn < /dev/tty
         case $yn in
             [Yy]* ) INSTALL_GROK=true; break;;
             [Nn]* ) break;;
@@ -187,7 +187,7 @@ main() {
     done
     
     while true; do
-        read -p "是否安装 Claude (DDD) 服务? (y/n): " yn
+        read -p "是否安装 Claude (DDD) 服务? (y/n): " yn < /dev/tty
         case $yn in
             [Yy]* ) INSTALL_DDD=true; break;;
             [Nn]* ) break;;
@@ -196,7 +196,7 @@ main() {
     done
     
     while true; do
-        read -p "是否安装 GPT 服务? (y/n): " yn
+        read -p "是否安装 GPT 服务? (y/n): " yn < /dev/tty
         case $yn in
             [Yy]* ) INSTALL_GPT=true; break;;
             [Nn]* ) break;;
@@ -205,7 +205,7 @@ main() {
     done
     
     while true; do
-        read -p "是否安装内容审核和速率限制服务? (y/n): " yn
+        read -p "是否安装内容审核和速率限制服务? (y/n): " yn < /dev/tty
         case $yn in
             [Yy]* ) INSTALL_AUDIT=true; break;;
             [Nn]* ) break;;

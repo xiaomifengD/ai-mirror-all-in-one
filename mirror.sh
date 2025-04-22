@@ -140,7 +140,7 @@ restore_databases() {
     fi
     
     # 获取所有备份目录
-    backup_dirs=($(ls -d ./backups/backup-* 2>/dev/null))
+    backup_dirs=($(ls -d ./backups/sql/backup-* 2>/dev/null))
     
     if [ ${#backup_dirs[@]} -eq 0 ]; then
         echo "未找到任何备份文件。"
@@ -182,13 +182,13 @@ restore_databases() {
     # 还原 grok_cool 数据库
     if [ -f "${selected_backup}/grok_cool.sql" ]; then
         echo "正在还原 grok_cool 数据库..."
-        docker compose exec -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' < "${selected_backup}/grok_cool.sql"
+        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' < "${selected_backup}/grok_cool.sql"
     fi
     
     # 还原 claude_cool 数据库
     if [ -f "${selected_backup}/claude_cool.sql" ]; then
         echo "正在还原 claude_cool 数据库..."
-        docker compose exec -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' < "${selected_backup}/claude_cool.sql"
+        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' < "${selected_backup}/claude_cool.sql"
     fi
     
     echo "数据库还原完成！"
