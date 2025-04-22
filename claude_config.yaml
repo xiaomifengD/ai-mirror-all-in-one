@@ -23,7 +23,7 @@ cool:
   eps: true
   file:
     mode: "local"
-    domain: "http://127.0.0.1:8300"
+    domain: "http://127.0.0.1:8302"
 
 modules:
   base:
