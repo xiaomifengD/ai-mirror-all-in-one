@@ -27,20 +27,15 @@ bash mirror.sh
 ```
 维护项目
 
-grok 后台地址
-http://域名/lyy0709
+## 后台管理地址
 
-默认账号: admin 123456
+| 服务 | 后台地址 | 默认账号 | 默认密码 |
+|------|---------|---------|---------|
+| **Grok** | `http://域名/lyy0709` | `admin` | `123456` |
+| **Claude** | `http://域名/lyy0709` | `admin` | `123456` |
+| **GPT** | `http://域名/xyhelper` | `admin` | `123456` |
 
+> 请登录后及时修改默认密码以确保安全
 
----
-claude 后台地址
-http://域名/lyy0709
-
-默认账号: admin 123456
-
----
-gpt 后台地址
-http://域名/xyhelper
-
-默认账号: admin 123456
+## 联系我
+![](https://raw.githubusercontent.com/xiaomifengD/xiaomifengD/refs/heads/main/img/contactme.jpg)
