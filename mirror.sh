@@ -20,7 +20,7 @@ check_docker() {
             echo
             echo -e "${BLUE}正在检查 AI 服务状态...${NC}"
             echo -e "${YELLOW}当前 AI 服务状态：${NC}"
-            docker compose -p ai-mirror-allinone ps
+            docker compose  ps
         fi
         
         return 0
@@ -107,15 +107,15 @@ backup_databases() {
     
     # 备份 cool 数据库
     echo "正在备份 cool 数据库..."
-    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" cool' > "${backup_dir}/cool.sql"
+    docker compose exec  mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" cool' > "${backup_dir}/cool.sql"
     
     # 备份 grok_cool 数据库
     echo "正在备份 grok_cool 数据库..."
-    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' > "${backup_dir}/grok_cool.sql"
+    docker compose exec  mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' > "${backup_dir}/grok_cool.sql"
     
     # 备份 claude_cool 数据库
     echo "正在备份 claude_cool 数据库..."
-    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' > "${backup_dir}/claude_cool.sql"
+    docker compose exec  mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' > "${backup_dir}/claude_cool.sql"
     
     echo "数据库备份完成！"
     echo "备份文件保存在: ${backup_dir}"
@@ -176,19 +176,19 @@ restore_databases() {
     # 还原 cool 数据库
     if [ -f "${selected_backup}/cool.sql" ]; then
         echo "正在还原 cool 数据库..."
-        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" cool' < "${selected_backup}/cool.sql"
+        docker compose exec  -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" cool' < "${selected_backup}/cool.sql"
     fi
     
     # 还原 grok_cool 数据库
     if [ -f "${selected_backup}/grok_cool.sql" ]; then
         echo "正在还原 grok_cool 数据库..."
-        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' < "${selected_backup}/grok_cool.sql"
+        docker compose exec  -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' < "${selected_backup}/grok_cool.sql"
     fi
     
     # 还原 claude_cool 数据库
     if [ -f "${selected_backup}/claude_cool.sql" ]; then
         echo "正在还原 claude_cool 数据库..."
-        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' < "${selected_backup}/claude_cool.sql"
+        docker compose exec  -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' < "${selected_backup}/claude_cool.sql"
     fi
     
     echo "数据库还原完成！"

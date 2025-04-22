@@ -225,7 +225,7 @@ main() {
     ./restart.sh    
     print_message "安装完成！"
     print_message "服务状态："
-    docker compose -p ai-mirror-allinone ps
+    docker compose  ps
     
 }
 
