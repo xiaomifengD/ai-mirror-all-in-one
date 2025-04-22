@@ -25,7 +25,7 @@ check_docker() {
         print_error "Docker 未安装，请先安装 Docker"
         exit 1
     fi
-    if ! command -v docker-compose &> /dev/null; then
+    if ! command -v docker compose &> /dev/null; then
         print_error "Docker Compose 未安装，请先安装 Docker Compose"
         exit 1
     fi
