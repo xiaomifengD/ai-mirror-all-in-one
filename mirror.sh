@@ -98,7 +98,7 @@ backup_databases() {
     timestamp=$(date +%Y%m%d-%H%M%S)
     
     # 创建本次备份的目录
-    backup_dir="./backups/backup-${timestamp}"
+    backup_dir="./backups/sql/backup-${timestamp}"
     mkdir -p "${backup_dir}"
     
     echo "正在备份数据库..."
@@ -106,15 +106,15 @@ backup_databases() {
     
     # 备份 cool 数据库
     echo "正在备份 cool 数据库..."
-    docker compose exec mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" cool' > "${backup_dir}/cool.sql"
+    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" cool' > "${backup_dir}/cool.sql"
     
     # 备份 grok_cool 数据库
     echo "正在备份 grok_cool 数据库..."
-    docker compose exec mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' > "${backup_dir}/grok_cool.sql"
+    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" grok_cool' > "${backup_dir}/grok_cool.sql"
     
     # 备份 claude_cool 数据库
     echo "正在备份 claude_cool 数据库..."
-    docker compose exec mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' > "${backup_dir}/claude_cool.sql"
+    docker compose exec -p ai-mirror-allinone mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' > "${backup_dir}/claude_cool.sql"
     
     echo "数据库备份完成！"
     echo "备份文件保存在: ${backup_dir}"
@@ -175,7 +175,7 @@ restore_databases() {
     # 还原 cool 数据库
     if [ -f "${selected_backup}/cool.sql" ]; then
         echo "正在还原 cool 数据库..."
-        docker compose exec -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" cool' < "${selected_backup}/cool.sql"
+        docker compose exec -p ai-mirror-allinone -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" cool' < "${selected_backup}/cool.sql"
     fi
     
     # 还原 grok_cool 数据库
