@@ -19,7 +19,7 @@ check_docker() {
         if [ -f "docker-compose.yml" ]; then
             echo
             echo "当前 AI 服务状态："
-            docker-compose ps
+            docker compose -p ai-mirror-allinone ps
         fi
         
         return 0
