@@ -12,19 +12,20 @@ NC='\033[0m' # No Color
 # Function to check if Docker is installed
 check_docker() {
     if command -v docker &> /dev/null; then
-        echo "Docker 已安装。"
+        echo -e "${GREEN}Docker 已安装。${NC}"
         docker --version
         
         # 检查是否存在 docker-compose.yml 文件
         if [ -f "docker-compose.yml" ]; then
             echo
-            echo "当前 AI 服务状态："
+            echo -e "${BLUE}正在检查 AI 服务状态...${NC}"
+            echo -e "${YELLOW}当前 AI 服务状态：${NC}"
             docker compose -p ai-mirror-allinone ps
         fi
         
         return 0
     else
-        echo "Docker 未安装。"
+        echo -e "${RED}Docker 未安装。${NC}"
         return 1
     fi
 }
