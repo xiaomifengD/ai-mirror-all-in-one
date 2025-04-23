@@ -227,6 +227,38 @@ main() {
     print_message "服务状态："
     docker compose  ps
     
+    # 打印端口使用情况
+    echo -e "\n${GREEN}[端口使用情况]${NC}"
+    if [ "$INSTALL_GROK" = true ]; then
+        echo -e "Grok: 8301 - Grok API服务"
+    fi
+    if [ "$INSTALL_DDD" = true ]; then
+        echo -e "Claude: 8302 - Claude API服务"
+    fi
+    if [ "$INSTALL_GPT" = true ]; then
+        echo -e "GPT: 8300 - GPT API服务"
+    fi
+
+    # 打印后台地址
+    echo -e "\n${GREEN}[后台管理地址]${NC}"
+    if [ "$INSTALL_GROK" = true ]; then
+        echo -e "Grok后台: http://域名/lyy0709"
+    fi
+    if [ "$INSTALL_DDD" = true ]; then
+        echo -e "Claude后台: http://域名/lyy0709"
+    fi
+    if [ "$INSTALL_GPT" = true ]; then
+        echo -e "GPT后台: http://域名/xyhelper"
+    fi
+
+    # 打印安全提醒
+    echo -e "\n${YELLOW}[⚠️ 安全提醒]${NC}"
+    echo -e "为了确保服务安全，请立即执行以下操作："
+    echo -e "1. 登录各个服务后台并修改默认密码"
+    echo -e "2. 默认账号密码："
+    echo -e "   - 管理员账号: admin"
+    echo -e "   - 默认密码: 123456"
+    echo -e "请自行到nginx配置反代"
 }
 
 # 执行主函数
