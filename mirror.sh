@@ -194,6 +194,48 @@ restore_databases() {
     echo "数据库还原完成！"
 }
 
+# Function to setup auto backup
+setup_auto_backup() {
+    if ! check_docker; then
+        echo "Docker 未安装，请先安装 Docker。"
+        return 1
+    fi
+    
+    if [ ! -f "docker-compose.yml" ]; then
+        echo "未找到 docker-compose.yml 文件，请先安装 AI 服务。"
+        return 1
+    fi
+
+    # 检查是否已经设置了自动备份
+    crontab -l 2>/dev/null | grep -q "auto_backup.sh"
+    if [ $? -eq 0 ]; then
+        echo -e "${YELLOW}检测到已经设置了自动备份任务。${NC}"
+        read -p "是否要取消自动备份？(y/n): " cancel
+        if [[ $cancel =~ ^[Yy]$ ]]; then
+            # 删除现有的自动备份任务
+            (crontab -l 2>/dev/null | grep -v "auto_backup.sh") | crontab -
+            echo -e "${GREEN}已取消自动备份任务。${NC}"
+        fi
+        return 0
+    fi
+
+    # 设置自动备份
+    echo -e "${BLUE}正在设置每天凌晨4点自动备份...${NC}"
+    
+    # 获取脚本所在目录的绝对路径
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    
+    # 确保备份脚本有执行权限
+    chmod +x "${SCRIPT_DIR}/auto_backup.sh"
+    
+    # 添加定时任务
+    (crontab -l 2>/dev/null; echo "0 4 * * * ${SCRIPT_DIR}/auto_backup.sh >> ${SCRIPT_DIR}/backups/auto_backup.log 2>&1") | crontab -
+    
+    echo -e "${GREEN}自动备份已设置完成！${NC}"
+    echo -e "${BLUE}系统将在每天凌晨4点自动进行数据库备份${NC}"
+    echo -e "${YELLOW}备份日志将保存在 backups/auto_backup.log${NC}"
+}
+
 # Main menu
 while true; do
     echo -e "${GREEN}请选择操作：${NC}"
@@ -203,9 +245,10 @@ while true; do
     echo -e "${BLUE}4. 停止服务${NC}"
     echo -e "${MAGENTA}5. 备份数据库${NC}"
     echo -e "${MAGENTA}6. 还原数据库${NC}"
-    echo -e "${RED}7. 退出${NC}"
+    echo -e "${CYAN}7. 设置自动备份${NC}"
+    echo -e "${RED}8. 退出${NC}"
     
-    read -p "请输入选项 (1-7): " choice < /dev/tty
+    read -p "请输入选项 (1-8): " choice < /dev/tty
     
     case $choice in
         1)
@@ -227,6 +270,9 @@ while true; do
             restore_databases
             ;;
         7)
+            setup_auto_backup
+            ;;
+        8)
             echo -e "${RED}正在退出...${NC}"
             exit 0
             ;;
