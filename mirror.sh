@@ -329,7 +329,7 @@ while true; do
     echo -e "${MAGENTA}5. 备份数据库${NC}"
     echo -e "${MAGENTA}6. 还原数据库${NC}"
     echo -e "${CYAN}7. 设置自动备份${NC}"
-    echo -e "${CYAN}8. 配置 R2 自动上传${NC}"
+    echo -e "${CYAN}8. 配置 备份SQL 到 R2 自动上传${NC}"
     echo -e "${RED}9. 退出${NC}"
     
     read -p "请输入选项 (1-9): " choice < /dev/tty
