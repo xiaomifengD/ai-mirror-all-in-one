@@ -1,4 +1,11 @@
 # ai-mirror-all-in-one
+
+<div align="right">
+  <a href="README.en.md">
+    <img src="https://img.shields.io/badge/-English-blue?style=for-the-badge&logo=markdown"/>
+  </a>
+</div>
+
 ## 说明
 **ai-mirror-allinone** 是集成了  gpt,克劳德,grok 三种镜像为一体的缝合怪，
 三个镜像可以共享 mysql 和 redis实例,减少了内存占用，还提供了bash脚本方便统一管理
@@ -7,6 +14,11 @@
 - https://github.com/xyhelper/chatgpt-share-server-deploy
 - https://github.com/dddd-dddd-dddd/dddd-deploy
 - https://github.com/lyy0709/grok-share-server-deploy
+
+> **新手提示** 🌟
+> 如果你是新手，建议先查看上述原仓库的使用说明和文档，了解各个镜像的基本使用方法。
+> 这将帮助你更好地理解和使用本项目的集成功能。
+
 ## 特别感谢
 感谢**栋哥**和**傻傻大佬**在gpt,克劳德,grok 镜像上面的奉献
 

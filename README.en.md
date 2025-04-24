@@ -1,4 +1,11 @@
 # ai-mirror-all-in-one
+
+<div align="right">
+  <a href="README.md">
+    <img src="https://img.shields.io/badge/-简体中文-red?style=for-the-badge&logo=markdown"/>
+  </a>
+</div>
+
 ## Description
 **ai-mirror-allinone** is an integrated solution that combines GPT, Claude, and Grok mirrors into a single system.
 These three mirrors can share MySQL and Redis instances to reduce memory usage. The project also provides bash scripts for unified management.
@@ -8,8 +15,12 @@ These three mirrors can share MySQL and Redis instances to reduce memory usage. 
 - https://github.com/dddd-dddd-dddd/dddd-deploy
 - https://github.com/lyy0709/grok-share-server-deploy
 
+> **Tips for Newcomers** 🌟
+> If you're new to this project, it's recommended to first check the documentation and instructions in the original repositories listed above.
+> This will help you better understand the basic usage of each mirror and make the most of this integrated solution.
+
 ## Special Thanks
-Thanks to **Brother Dong** and **Master Shasha** for their contributions to the GPT, Claude, and Grok mirrors.
+Thanks to **栋哥** and **傻傻大佬** for their contributions to the GPT, Claude, and Grok mirrors.
 
 ## Feature List
     - Docker installation
