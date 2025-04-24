@@ -72,8 +72,12 @@ for sql_file in "$BACKUP_DIR"/*.sql; do
     if [ -f "$sql_file" ]; then
         file_name=$(basename "$sql_file")
         echo "正在上传: $file_name"
-        aws s3 cp "$sql_file" "s3://$R2_BUCKET/$DIR_NAME/$file_name" \
+        aws s3api put-object \
+            --bucket "$R2_BUCKET" \
+            --key "$DIR_NAME/$file_name" \
+            --body "$sql_file" \
             --endpoint-url "$R2_ENDPOINT" \
+            --checksum-algorithm CRC32 \
             --debug
         
         if [ $? -eq 0 ]; then

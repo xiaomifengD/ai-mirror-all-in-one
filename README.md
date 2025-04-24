@@ -20,7 +20,7 @@
 ```
 curl -sSfL https://raw.githubusercontent.com/xiaomifengD/ai-mirror-all-in-one/refs/heads/main/quick_install.sh | bash
 ```
-![使用界面](mirror.png)
+![使用界面](menu.png)
 
 后续可以用
 ```
