@@ -41,4 +41,6 @@ bash mirror.sh
 > 请登录后及时修改默认密码以确保安全
 
 ## 联系我
+Telegram: [加入 ai-mirror-allinone 群组](https://t.me/+okyKNxjR3_U1MDM1)
+
 ![](https://raw.githubusercontent.com/xiaomifengD/xiaomifengD/refs/heads/main/img/contactme.jpg)
