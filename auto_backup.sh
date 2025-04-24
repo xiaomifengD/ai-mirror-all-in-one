@@ -39,5 +39,6 @@ echo "备份文件保存在: ${backup_dir}"
 # 如果配置了 R2，则上传备份
 if [ -n "$R2_ENDPOINT" ] && [ -n "$R2_ACCESS_KEY_ID" ] && [ -n "$R2_SECRET_ACCESS_KEY" ] && [ -n "$R2_BUCKET" ]; then
     echo "检测到 R2 配置，开始上传备份..."
+    chmod +x r2_upload.sh
     ./r2_upload.sh "$backup_dir"
 fi 
