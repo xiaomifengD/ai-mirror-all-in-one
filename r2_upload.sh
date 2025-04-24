@@ -48,6 +48,19 @@ export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
 export AWS_DEFAULT_REGION="$R2_REGION"
 
+# 检查 bucket 是否存在
+echo "检查存储桶是否存在..."
+if ! aws s3api head-bucket --bucket "$R2_BUCKET" --endpoint-url "$R2_ENDPOINT" 2>/dev/null; then
+    echo "存储桶不存在，正在创建..."
+    aws s3api create-bucket --bucket "$R2_BUCKET" --endpoint-url "$R2_ENDPOINT"
+    if [ $? -eq 0 ]; then
+        echo "✓ 存储桶创建成功"
+    else
+        echo "✗ 存储桶创建失败"
+        exit 1
+    fi
+fi
+
 # 上传文件到 R2
 echo "开始上传备份文件到 Cloudflare R2..."
 
@@ -61,12 +74,13 @@ for sql_file in "$BACKUP_DIR"/*.sql; do
         echo "正在上传: $file_name"
         aws s3 cp "$sql_file" "s3://$R2_BUCKET/$DIR_NAME/$file_name" \
             --endpoint-url "$R2_ENDPOINT" \
-            --quiet
+            --debug
         
         if [ $? -eq 0 ]; then
             echo "✓ 成功上传: $file_name"
         else
             echo "✗ 上传失败: $file_name"
+            echo "请检查以上输出的详细错误信息"
         fi
     fi
 done
