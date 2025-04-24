@@ -43,4 +43,9 @@ bash mirror.sh
 ## 联系我
 Telegram: [加入 ai-mirror-allinone 群组](https://t.me/+okyKNxjR3_U1MDM1)
 
-![](https://raw.githubusercontent.com/xiaomifengD/xiaomifengD/refs/heads/main/img/contactme.jpg)
+<table>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/xiaomifengD/xiaomifengD/refs/heads/main/img/qun.jpg" width="300"/></td>
+    <td><img src="https://raw.githubusercontent.com/xiaomifengD/xiaomifengD/refs/heads/main/img/contactme.jpg" width="300"/></td>
+  </tr>
+</table>
