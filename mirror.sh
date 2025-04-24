@@ -236,6 +236,73 @@ setup_auto_backup() {
     echo -e "${YELLOW}备份日志将保存在 backups/auto_backup.log${NC}"
 }
 
+# Function to configure R2 settings
+configure_r2() {
+    if [ ! -f "config.env.example" ]; then
+        echo -e "${RED}错误：未找到配置模板文件 config.env.example${NC}"
+        return 1
+    fi
+
+    # 如果配置文件不存在，从模板创建
+    if [ ! -f "config.env" ]; then
+        cp config.env.example config.env
+        echo -e "${GREEN}已创建配置文件 config.env${NC}"
+    fi
+
+    # 读取当前配置
+    if [ -f "config.env" ]; then
+        source config.env
+    fi
+
+    echo -e "${BLUE}配置 Cloudflare R2 设置${NC}"
+    echo -e "${YELLOW}请输入以下信息（如果要保持当前值，直接按回车）：${NC}"
+    
+    # R2 Endpoint
+    echo -n "R2 Endpoint [${R2_ENDPOINT:-未设置}]: "
+    read r2_endpoint
+    if [ -n "$r2_endpoint" ]; then
+        sed -i "s|^R2_ENDPOINT=.*|R2_ENDPOINT=$r2_endpoint|" config.env
+    fi
+
+    # Access Key ID
+    echo -n "Access Key ID [${R2_ACCESS_KEY_ID:-未设置}]: "
+    read access_key
+    if [ -n "$access_key" ]; then
+        sed -i "s|^R2_ACCESS_KEY_ID=.*|R2_ACCESS_KEY_ID=$access_key|" config.env
+    fi
+
+    # Secret Access Key
+    echo -n "Secret Access Key [${R2_SECRET_ACCESS_KEY:-未设置}]: "
+    read secret_key
+    if [ -n "$secret_key" ]; then
+        sed -i "s|^R2_SECRET_ACCESS_KEY=.*|R2_SECRET_ACCESS_KEY=$secret_key|" config.env
+    fi
+
+    # Bucket Name
+    echo -n "Bucket Name [${R2_BUCKET:-未设置}]: "
+    read bucket
+    if [ -n "$bucket" ]; then
+        sed -i "s|^R2_BUCKET=.*|R2_BUCKET=$bucket|" config.env
+    fi
+
+    echo -e "${GREEN}R2 配置已更新！${NC}"
+
+    # 检查 AWS CLI
+    if ! command -v aws &> /dev/null; then
+        echo -e "${YELLOW}警告：未检测到 AWS CLI${NC}"
+        echo -e "${BLUE}是否要安装 AWS CLI？(y/n)${NC}"
+        read install_aws
+        if [[ $install_aws =~ ^[Yy]$ ]]; then
+            echo -e "${BLUE}正在下载 AWS CLI 安装程序...${NC}"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            rm -rf aws awscliv2.zip
+            echo -e "${GREEN}AWS CLI 安装完成！${NC}"
+        fi
+    fi
+}
+
 # Main menu
 while true; do
     echo -e "${GREEN}请选择操作：${NC}"
@@ -246,9 +313,10 @@ while true; do
     echo -e "${MAGENTA}5. 备份数据库${NC}"
     echo -e "${MAGENTA}6. 还原数据库${NC}"
     echo -e "${CYAN}7. 设置自动备份${NC}"
-    echo -e "${RED}8. 退出${NC}"
+    echo -e "${CYAN}8. 配置 R2 自动上传${NC}"
+    echo -e "${RED}9. 退出${NC}"
     
-    read -p "请输入选项 (1-8): " choice < /dev/tty
+    read -p "请输入选项 (1-9): " choice < /dev/tty
     
     case $choice in
         1)
@@ -273,6 +341,9 @@ while true; do
             setup_auto_backup
             ;;
         8)
+            configure_r2
+            ;;
+        9)
             echo -e "${RED}正在退出...${NC}"
             exit 0
             ;;

@@ -6,6 +6,11 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # 切换到脚本所在目录
 cd "$SCRIPT_DIR"
 
+# 检查是否启用了 R2 上传
+if [ -f "config.env" ]; then
+    source config.env
+fi
+
 # 获取当前时间戳
 timestamp=$(date +%Y%m%d-%H%M%S)
 
@@ -29,4 +34,10 @@ echo "正在备份 claude_cool 数据库..."
 docker compose exec mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" claude_cool' > "${backup_dir}/claude_cool.sql"
 
 echo "自动备份完成！"
-echo "备份文件保存在: ${backup_dir}" 
+echo "备份文件保存在: ${backup_dir}"
+
+# 如果配置了 R2，则上传备份
+if [ -n "$R2_ENDPOINT" ] && [ -n "$R2_ACCESS_KEY_ID" ] && [ -n "$R2_SECRET_ACCESS_KEY" ] && [ -n "$R2_BUCKET" ]; then
+    echo "检测到 R2 配置，开始上传备份..."
+    ./r2_upload.sh "$backup_dir"
+fi 
