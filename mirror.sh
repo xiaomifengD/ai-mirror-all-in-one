@@ -254,6 +254,23 @@ configure_r2() {
         source config.env
     fi
 
+    # 检查 AWS CLI
+    if ! command -v aws &> /dev/null; then
+        echo -e "${YELLOW}未检测到 AWS CLI${NC}"
+        echo -e "${BLUE}是否要安装 AWS CLI？(y/n)${NC}"
+        read install_aws
+        if [[ $install_aws =~ ^[Yy]$ ]]; then
+            chmod +x install_awscli.sh
+            ./install_awscli.sh
+            if [ $? -ne 0 ]; then
+                echo -e "${RED}AWS CLI 安装失败${NC}"
+                return 1
+            fi
+        else
+            echo -e "${YELLOW}跳过 AWS CLI 安装。注意：没有 AWS CLI 将无法使用 R2 上传功能。${NC}"
+        fi
+    fi
+
     echo -e "${BLUE}配置 Cloudflare R2 设置${NC}"
     echo -e "${YELLOW}请输入以下信息（如果要保持当前值，直接按回车）：${NC}"
     
@@ -286,19 +303,18 @@ configure_r2() {
     fi
 
     echo -e "${GREEN}R2 配置已更新！${NC}"
-
-    # 检查 AWS CLI
-    if ! command -v aws &> /dev/null; then
-        echo -e "${YELLOW}警告：未检测到 AWS CLI${NC}"
-        echo -e "${BLUE}是否要安装 AWS CLI？(y/n)${NC}"
-        read install_aws
-        if [[ $install_aws =~ ^[Yy]$ ]]; then
-            echo -e "${BLUE}正在下载 AWS CLI 安装程序...${NC}"
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-            rm -rf aws awscliv2.zip
-            echo -e "${GREEN}AWS CLI 安装完成！${NC}"
+    
+    # 测试配置
+    if [ -n "$R2_ENDPOINT" ] && [ -n "$R2_ACCESS_KEY_ID" ] && [ -n "$R2_SECRET_ACCESS_KEY" ] && [ -n "$R2_BUCKET" ]; then
+        echo -e "${BLUE}正在测试 R2 连接...${NC}"
+        export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
+        export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
+        export AWS_DEFAULT_REGION="$R2_REGION"
+        
+        if aws s3 ls "s3://$R2_BUCKET" --endpoint-url "$R2_ENDPOINT" &> /dev/null; then
+            echo -e "${GREEN}R2 连接测试成功！${NC}"
+        else
+            echo -e "${RED}R2 连接测试失败，请检查配置${NC}"
         fi
     fi
 }
