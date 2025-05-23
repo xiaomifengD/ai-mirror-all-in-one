@@ -92,7 +92,7 @@ EOL
 EOL
         if [ "$INSTALL_AUDIT" = true ]; then
             cat >> docker-compose.yml << 'EOL'
-      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/grok/audit_limit"
 EOL
         fi
         cat >> docker-compose.yml << 'EOL'
@@ -117,7 +117,7 @@ EOL
 EOL
         if [ "$INSTALL_AUDIT" = true ]; then
             cat >> docker-compose.yml << 'EOL'
-      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/claude/audit_limit"
 EOL
         fi
         cat >> docker-compose.yml << 'EOL'
@@ -141,7 +141,7 @@ EOL
 EOL
         if [ "$INSTALL_AUDIT" = true ]; then
             cat >> docker-compose.yml << 'EOL'
-      AUDIT_LIMIT_URL: "http://auditlimit:8080/audit_limit"
+      AUDIT_LIMIT_URL: "http://auditlimit:8080/chatgpt/audit_limit"
 EOL
         fi
         cat >> docker-compose.yml << 'EOL'
@@ -154,11 +154,29 @@ EOL
     if [ "$INSTALL_AUDIT" = true ]; then
         cat >> docker-compose.yml << 'EOL'
   auditlimit:
-    image: xyhelper/auditlimit
+    image: lyy0709/auditlimit
     restart: always
+    ports:
+      - "127.0.0.1:9611:8080"
+    volumes:
+      - ./data:/app/data
     environment:
-      LIMIT: 40
-      PER: "3h"
+      PORT: 9611
+      OAIKEY: "" # OpenAI API key 用于内容审核
+      CHATGPT-AUTO: "200/3h"
+      CHATGPT-TEXT-DAVINCI-002-RENDER-SHA: "200/3h"
+      CHATGPT-GPT-4O-MINI: "200/3h"
+      CHATGPT-GPT-4O: "60/3h"
+      CHATGPT-GPT-4: "20/3h"
+      CHATGPT-GPT-4O-CANMORE: "30/3h"
+      CHATGPT-O1-PREVIEW: "7/24h"
+      CHATGPT-O1-MINI: "50/24h"
+      CLAUDE-CLAUDE-3-7-SONNET: "20/3h"
+      CLAUDE-CLAUDE-3-5-HAIKU: "20/3h"
+      GROK-GROK2: "200/3h"
+      GROK-GROK3: "20/3h"
+      GROK-REASONING: "20/24h"
+      GROK-DEEPSEARCH: "20/24h"
 EOL
     fi
 }
@@ -237,6 +255,9 @@ main() {
     fi
     if [ "$INSTALL_GPT" = true ]; then
         echo -e "GPT: 8300 - GPT API服务"
+    fi
+    if [ "$INSTALL_AUDIT" = true ]; then
+        echo -e "审核限流: 9611 - 内容审核和速率限制服务"
     fi
 
     # 打印后台地址
